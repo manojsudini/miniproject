@@ -1,45 +1,29 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
+
+
+import ApplicantLogin from "./pages/ApplicantLogin";
+import ApplicantSignup from "./pages/ApplicantSignup";
+import ApplicantDashboard from "./pages/ApplicantDashboard";
+
+import RecruiterDashboard from "./pages/RecruiterDashboard";
 
 function App() {
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      
-      {/* LEFT THIN NAVBAR */}
-      <nav
-        style={{
-          width: "80px",          // thin
-          backgroundColor: "#000",
-          display: "flex",
-          flexDirection: "column",
-          paddingTop: "20px"
-        }}
-      >
-        <Link to="/" style={linkStyle}>Home</Link>
-        <Link to="/about" style={linkStyle}>About</Link>
-        <Link to="/contact" style={linkStyle}>Contact</Link>
-      </nav>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
 
-      {/* PAGE CONTENT */}
-      <div style={{ flex: 1, padding: "20px" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
-      </div>
-    </div>
+      
+        <Route path="/applicant/login" element={<ApplicantLogin />} />
+        <Route path="/applicant/signup" element={<ApplicantSignup />} />
+        <Route path="/applicant/dashboard" element={<ApplicantDashboard />} />
+
+        {/* DIRECT recruiter dashboard */}
+        <Route path="/recruiter" element={<RecruiterDashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-const linkStyle = {
-  color: "white",
-  textDecoration: "none",
-  padding: "10px 8px",
-  fontSize: "12px",
-  textAlign: "left"
-};
 
 export default App;
