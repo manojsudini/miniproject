@@ -1,26 +1,20 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
 
-
-import ApplicantLogin from "./pages/ApplicantLogin";
-import ApplicantSignup from "./pages/ApplicantSignup";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import ApplicantDashboard from "./pages/ApplicantDashboard";
-
-import RecruiterDashboard from "./pages/RecruiterDashboard";
+import HRDashboard from "./pages/HRDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-
-      
-        <Route path="/applicant/login" element={<ApplicantLogin />} />
-        <Route path="/applicant/signup" element={<ApplicantSignup />} />
-        <Route path="/applicant/dashboard" element={<ApplicantDashboard />} />
-
-        {/* DIRECT recruiter dashboard */}
-        <Route path="/recruiter" element={<RecruiterDashboard />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/applicant" element={<ApplicantDashboard />} />
+        <Route path="/hr" element={<HRDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );

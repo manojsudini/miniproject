@@ -1,0 +1,186 @@
+/* ===== GLOBAL RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== PAGE BACKGROUND ===== */
+.signup-container {
+  height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background-size: 400% 400%;
+  animation: bgMove 12s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== SIGNUP CARD ===== */
+.signup-card {
+  background: rgba(20, 20, 20, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 35px;
+  width: 380px;
+  border-radius: 14px;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.75);
+  color: white;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* ===== TITLE ===== */
+.signup-card h2 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+
+/* ===== SUBTITLE ===== */
+.subtitle {
+  font-size: 13px;
+  color: #b5b5b5;
+  margin-bottom: 22px;
+}
+
+/* ===== INPUTS ===== */
+.signup-card input,
+.signup-card select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: white;
+  outline: none;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.signup-card input::placeholder {
+  color: #aaa;
+}
+
+/* ===== SELECT FIX ===== */
+.signup-card select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.signup-card input:focus,
+.signup-card select:focus {
+  border-color: #4facfe;
+  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.35);
+}
+
+/* ===== BUTTON ===== */
+.signup-card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  border: none;
+  border-radius: 10px;
+  color: black;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.signup-card button:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(79, 172, 254, 0.55);
+}
+
+/* ===== LINK ===== */
+.link {
+  margin-top: 20px;
+  padding-top: 10px;
+  font-size: 14px;
+  color: #ccc;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.link a {
+  color: #4facfe;
+  text-decoration: none;
+}
+
+.link a:hover {
+  text-decoration: underline;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bgMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+/* ===== JOB ROLE TITLE ===== */
+.role-title {
+  text-align: left;
+  font-size: 14px;
+  color: #b5b5b5;
+  margin-bottom: 8px;
+}
+
+/* ===== ROLE SELECTION CARDS ===== */
+.role-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.role-group label {
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px;
+  transition: all 0.25s ease;
+}
+
+.role-group input {
+  display: none;
+}
+
+.role-group label:has(input:checked) {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: black;
+  font-weight: bold;
+  box-shadow: 0 6px 15px rgba(79, 172, 254, 0.45);
+}

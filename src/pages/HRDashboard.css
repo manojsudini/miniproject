@@ -1,0 +1,153 @@
+.hr-page {
+  min-height: 100vh;
+  padding: 90px 40px 40px;
+  background: radial-gradient(circle at top, #0f2a33, #020617);
+  color: #e5e7eb;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.jd-card {
+  max-width: 720px;
+  margin: 0 auto 40px;
+  padding: 28px;
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.jd-card select,
+.jd-card textarea,
+.jd-card input {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+.jd-card textarea {
+  min-height: 120px;
+  resize: none;
+}
+
+.jd-card button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.table-card {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 22px;
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+}
+
+.table-card h3 {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.table-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #020617;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+th,
+td {
+  padding: 14px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.match {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.view-btn,
+.download-btn {
+  margin-right: 6px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.accept-btn {
+  padding: 6px 10px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin-right: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.reject-btn {
+  padding: 6px 10px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.status.accepted {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.status.rejected {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.shortlist-bar {
+  margin-top: 18px;
+  text-align: right;
+}
+
+.shortlist-bar button {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
