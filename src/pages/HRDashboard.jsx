@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { analyzeResumes } from "../ats/atsLogic";
-import "./HRDashboard.css";
 import Navbar from "../components/Navbar.jsx";
+import "./HRDashboard.css";
 
 function HRDashboard() {
   const [jobDescription, setJobDescription] = useState("");
   const [role, setRole] = useState("Software Tester");
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState("");
+  const [allResults, setAllResults] = useState([]);
   const [results, setResults] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+
+  /* 🔒 LOCK BACKGROUND SCROLL WHEN POPUP OPENS */
+  useEffect(() => {
+    if (showPopup) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showPopup]);
 
   const handleAnalyze = () => {
     const applications =
@@ -24,32 +39,52 @@ function HRDashboard() {
 
     const merged = analyzed.map((res, index) => ({
       ...res,
-      resumeName: filtered[index].resumeName,
+      resumeName: filtered[index]?.resumeName || "resume.pdf",
       status: "Pending"
     }));
 
-    setResults(merged.slice(0, limit));
+    setAllResults(merged);
+    setResults(limit ? merged.slice(0, limit) : merged);
   };
 
   const updateStatus = (index, status) => {
-    const updated = [...results];
-    updated[index].status = status;
-    setResults(updated);
+    const updatedResults = [...results];
+    updatedResults[index].status = status;
+
+    const updatedAll = [...allResults];
+    const originalIndex = allResults.findIndex(
+      r => r.name === updatedResults[index].name
+    );
+    if (originalIndex !== -1) {
+      updatedAll[originalIndex].status = status;
+    }
+
+    setResults(updatedResults);
+    setAllResults(updatedAll);
   };
 
+  const handleLimitChange = (e) => {
+    const value = Number(e.target.value);
+    setLimit(value);
+    setResults(value ? allResults.slice(0, value) : allResults);
+  };
+
+  const shortlisted = allResults.filter(r => r.status === "Accepted");
+
   const downloadShortlisted = () => {
-    const shortlisted = results.filter(r => r.status === "Accepted");
     alert(`Downloading ${shortlisted.length} shortlisted resumes`);
   };
 
   return (
     <>
       <Navbar role="hr" />
+
       <div className="hr-page">
         <h2 className="page-title">HR Dashboard</h2>
 
+        {/* JD CARD */}
         <div className="jd-card">
-          <select onChange={(e) => setRole(e.target.value)}>
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
             <option>Software Tester</option>
             <option>Software Developer</option>
             <option>Frontend Developer</option>
@@ -67,43 +102,51 @@ function HRDashboard() {
             onChange={(e) => setJobDescription(e.target.value)}
           />
 
-          <input
-            type="number"
-            placeholder="Number of candidates required"
-            value={limit}
-            onChange={(e) => setLimit(Number(e.target.value))}
-          />
-
           <button onClick={handleAnalyze}>Analyze Resumes</button>
         </div>
 
+        {/* RESULTS TABLE */}
         {results.length > 0 && (
           <div className="table-card">
-            <h3>ATS Screening Results</h3>
+            <div className="table-header">
+              <h3>ATS Screening Results</h3>
+
+              <button
+                className="view-shortlisted-btn"
+                onClick={() => setShowPopup(true)}
+              >
+                View Shortlisted Resumes ({shortlisted.length})
+              </button>
+            </div>
+
+            <div className="limit-input-wrapper">
+              <input
+                type="number"
+                placeholder="Number of candidates required"
+                value={limit}
+                onChange={handleLimitChange}
+              />
+            </div>
 
             <div className="table-scroll">
               <table>
                 <thead>
                   <tr>
-                    <th>Candidate</th>
-                    <th>Resume</th>
-                    <th>Match %</th>
-                    <th>Status</th>
+                    <th>CANDIDATE</th>
+                    <th>RESUME</th>
+                    <th>MATCH %</th>
+                    <th>STATUS</th>
                   </tr>
                 </thead>
-
                 <tbody>
                   {results.map((res, index) => (
                     <tr key={index}>
                       <td>{res.name}</td>
-
                       <td>
                         <button className="view-btn">View</button>
                         <button className="download-btn">Download</button>
                       </td>
-
                       <td className="match">{res.percentage}%</td>
-
                       <td>
                         {res.status === "Pending" ? (
                           <>
@@ -131,14 +174,57 @@ function HRDashboard() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
 
-            {results.some(r => r.status === "Accepted") && (
-              <div className="shortlist-bar">
-                <button onClick={downloadShortlisted}>
+        {/* SHORTLIST POPUP */}
+        {showPopup && (
+          <div className="popup-overlay">
+            <div className="shortlist-modal">
+              <h3>Shortlisted Candidates</h3>
+
+              <div className="shortlist-table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>CANDIDATE</th>
+                      <th>RESUME</th>
+                      <th>MATCH %</th>
+                      <th>STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shortlisted.map((c, i) => (
+                      <tr key={i}>
+                        <td>{c.name}</td>
+                        <td>
+                          <button className="view-btn">View</button>
+                          <button className="download-btn">Download</button>
+                        </td>
+                        <td className="match">{c.percentage}%</td>
+                        <td className="status accepted">Accepted</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="shortlist-actions">
+                <button
+                  className="download-all-btn"
+                  onClick={downloadShortlisted}
+                >
                   Download Shortlisted Resumes
                 </button>
+
+                <button
+                  className="close-btn"
+                  onClick={() => setShowPopup(false)}
+                >
+                  Close
+                </button>
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>
