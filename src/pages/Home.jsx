@@ -47,14 +47,14 @@ const Home = () => {
         <div className="hero-actions">
           <button
             className="btn-main"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/login", { state: { role: "Applicant" } })}
           >
             I’m a Job Seeker
-          </button>
+          </button> 
 
           <button
             className="btn-outline"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/login", { state: { role: "HR" } })}
           >
             I’m an HR Recruiter
           </button>
