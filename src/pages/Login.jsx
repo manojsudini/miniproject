@@ -1,10 +1,17 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
+    const location = useLocation();
     const navigate = useNavigate();
     const [role, setRole] = useState("applicant");
+
+    useEffect(() => {
+        if (location.state?.role) {
+            setRole(location.state.role.toLowerCase());
+        }
+    }, [location.state]);
 
     const handleLogin = () => {
         if (role === "applicant") navigate("/applicant");
@@ -20,12 +27,12 @@ function Login() {
 
                 <input type="email" placeholder="Email" />
                 <input type="password" placeholder="Password" />
+
                 <select value={role} onChange={(e) => setRole(e.target.value)}>
                     <option value="applicant">Applicant</option>
                     <option value="hr">HR</option>
                     <option value="admin">Admin</option>
                 </select>
-
 
                 <button onClick={handleLogin}>Login</button>
 

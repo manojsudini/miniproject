@@ -19,35 +19,13 @@ function Signup() {
                 <input type="email" placeholder="Email" />
                 <input type="password" placeholder="Password" />
 
-                <p className="role-title">Select Job Role</p>
 
-                <div className="role-group">
-                    <label>
-                        <input type="radio" name="jobRole" />
-                        Software Tester
-                    </label>
-
-                    <label>
-                        <input type="radio" name="jobRole" />
-                        Frontend Developer
-                    </label>
-
-                    <label>
-                        <input type="radio" name="jobRole" />
-                        Backend Developer
-                    </label>
-
-                    <label>
-                        <input type="radio" name="jobRole" />
-                        Data Analyst
-                    </label>
-                </div>
 
 
                 <button onClick={handleSignup}>Create Account</button>
 
                 <p className="link">
-                    Already have an account? <a href="/">Login</a>
+                    Already have an account? <a href="/login">Login</a>
                 </p>
             </div>
         </div>
