@@ -13,19 +13,17 @@ function Login() {
   const [role, setRole] = useState(fixedRole || "");
 
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState(""); // success | error
+  const [messageType, setMessageType] = useState("");
 
   useEffect(() => {
-    if (fixedRole) {
-      setRole(fixedRole);
-    }
+    if (fixedRole) setRole(fixedRole);
   }, [fixedRole]);
 
-  const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     setMessage("");
 
     if (!email || !password) {
@@ -41,7 +39,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, role }),
@@ -50,7 +48,7 @@ function Login() {
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage(data.message);
+        setMessage(data.message || "Invalid credentials");
         setMessageType("error");
         return;
       }
@@ -67,7 +65,7 @@ function Login() {
         if (data.role === "admin") navigate("/admin");
       }, 900);
     } catch {
-      setMessage("Login failed. Please try again.");
+      setMessage("Server error. Please try again.");
       setMessageType("error");
     }
   };
@@ -77,45 +75,40 @@ function Login() {
       <div className="login-card">
         <h2>Login</h2>
 
-        {/* MESSAGE */}
         {message && (
           <div className={`form-message ${messageType}`}>
             {message}
           </div>
         )}
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setMessage("");
-          }}
-        />
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setMessage("");
-          }}
-        />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-        {fixedRole ? (
-          <input value={role.toUpperCase()} disabled />
-        ) : (
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="">Select Role</option>
-            <option value="applicant">Applicant</option>
-            <option value="hr">HR</option>
-            <option value="admin">Admin</option>
-          </select>
-        )}
+          {fixedRole ? (
+            <input value={role.toUpperCase()} disabled />
+          ) : (
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="">Select Role</option>
+              <option value="applicant">Applicant</option>
+              <option value="hr">HR</option>
+              <option value="admin">Admin</option>
+            </select>
+          )}
 
-        <button onClick={handleLogin}>Login</button>
+          <button type="submit">Login</button>
+        </form>
 
         <p className="link">
           New user?{" "}
