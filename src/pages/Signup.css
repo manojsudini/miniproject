@@ -184,3 +184,25 @@
   font-weight: bold;
   box-shadow: 0 6px 15px rgba(79, 172, 254, 0.45);
 }
+
+select option {
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
+/* ===== FORM MESSAGE (TEXT ONLY) ===== */
+.form-message {
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+.form-message.success {
+  color: #22c55e; /* green */
+}
+
+.form-message.error {
+  color: #ef4444; /* red */
+}

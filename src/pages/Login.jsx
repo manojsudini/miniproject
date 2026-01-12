@@ -3,45 +3,135 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [role, setRole] = useState("applicant");
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    useEffect(() => {
-        if (location.state?.role) {
-            setRole(location.state.role.toLowerCase());
-        }
-    }, [location.state]);
+  const fixedRole = location.state?.role || "";
 
-    const handleLogin = () => {
-        if (role === "applicant") navigate("/applicant");
-        if (role === "hr") navigate("/hr");
-        if (role === "admin") navigate("/admin");
-    };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState(fixedRole || "");
 
-    return (
-        <div className="login-container">
-            <div className="login-card">
-                <h2>HireMate</h2>
-                <p className="subtitle">ATS Resume Screening System</p>
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // success | error
 
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Password" />
+  useEffect(() => {
+    if (fixedRole) {
+      setRole(fixedRole);
+    }
+  }, [fixedRole]);
 
-                <select value={role} onChange={(e) => setRole(e.target.value)}>
-                    <option value="applicant">Applicant</option>
-                    <option value="hr">HR</option>
-                    <option value="admin">Admin</option>
-                </select>
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
-                <button onClick={handleLogin}>Login</button>
+  const handleLogin = async () => {
+    setMessage("");
 
-                <p className="link">
-                    New user? <a href="/signup">Create account</a>
-                </p>
-            </div>
-        </div>
-    );
+    if (!email || !password) {
+      setMessage("Email and password are required");
+      setMessageType("error");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setMessage("Please enter a valid email address");
+      setMessageType("error");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, role }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.message);
+        setMessageType("error");
+        return;
+      }
+
+      setMessage("Login successful. Redirecting...");
+      setMessageType("success");
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+
+      setTimeout(() => {
+        if (data.role === "applicant") navigate("/applicant");
+        if (data.role === "hr") navigate("/hr");
+        if (data.role === "admin") navigate("/admin");
+      }, 900);
+    } catch {
+      setMessage("Login failed. Please try again.");
+      setMessageType("error");
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Login</h2>
+
+        {/* MESSAGE */}
+        {message && (
+          <div className={`form-message ${messageType}`}>
+            {message}
+          </div>
+        )}
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setMessage("");
+          }}
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setMessage("");
+          }}
+        />
+
+        {fixedRole ? (
+          <input value={role.toUpperCase()} disabled />
+        ) : (
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="">Select Role</option>
+            <option value="applicant">Applicant</option>
+            <option value="hr">HR</option>
+            <option value="admin">Admin</option>
+          </select>
+        )}
+
+        <button onClick={handleLogin}>Login</button>
+
+        <p className="link">
+          New user?{" "}
+          <span
+            onClick={() =>
+              fixedRole
+                ? navigate("/signup", { state: { role: fixedRole } })
+                : navigate("/signup")
+            }
+          >
+            Create account
+          </span>
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Login;
