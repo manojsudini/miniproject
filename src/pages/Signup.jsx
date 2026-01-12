@@ -16,11 +16,11 @@ function Signup() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
 
-  const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSignup = async () => {
+  const handleSignup = async (e) => {
+    e.preventDefault();
     setMessage("");
 
     if (!name || !email || !password || !role) {
@@ -36,7 +36,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, role }),
@@ -45,19 +45,19 @@ function Signup() {
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage(data.message);
+        setMessage(data.message || "Signup failed");
         setMessageType("error");
         return;
       }
 
-      setMessage("Account created successfully. Redirecting to login...");
+      setMessage("Account created successfully. Redirecting...");
       setMessageType("success");
 
       setTimeout(() => {
         navigate("/login", { state: { role } });
       }, 1200);
-    } catch {
-      setMessage("Signup failed. Please try again.");
+    } catch (err) {
+      setMessage("Server error. Please try again.");
       setMessageType("error");
     }
   };
@@ -67,53 +67,45 @@ function Signup() {
       <div className="signup-card">
         <h2>Create Account</h2>
 
-        {/* MESSAGE */}
         {message && (
           <div className={`form-message ${messageType}`}>
             {message}
           </div>
         )}
 
-        <input
-          placeholder="Full Name"
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-            setMessage("");
-          }}
-        />
+        <form onSubmit={handleSignup}>
+          <input
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
-        <input
-          placeholder="Email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setMessage("");
-          }}
-        />
+          <input
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setMessage("");
-          }}
-        />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-        {fixedRole ? (
-          <input value={role.toUpperCase()} disabled />
-        ) : (
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="">Select Role</option>
-            <option value="applicant">Applicant</option>
-            <option value="hr">HR</option>
-            <option value="admin">Admin</option>
-          </select>
-        )}
+          {fixedRole ? (
+            <input value={role.toUpperCase()} disabled />
+          ) : (
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="">Select Role</option>
+              <option value="applicant">Applicant</option>
+              <option value="hr">HR</option>
+              <option value="admin">Admin</option>
+            </select>
+          )}
 
-        <button onClick={handleSignup}>Create Account</button>
+          <button type="submit">Create Account</button>
+        </form>
       </div>
     </div>
   );

@@ -8,29 +8,48 @@ function ApplicantDashboard() {
     email: "",
     phone: "",
     role: "Software Tester",
-    resume: null
+    resume: null,
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.name || !form.email || !form.resume) {
       alert("Please fill all required fields");
       return;
     }
 
-    const applications =
-      JSON.parse(localStorage.getItem("applications")) || [];
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("email", form.email);
+    formData.append("phone", form.phone);
+    formData.append("role", form.role);
+    formData.append("resume", form.resume);
 
-    applications.push({
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-      role: form.role,
-      resumeName: form.resume.name,
-      status: "ATS Screening"
-    });
+    try {
+      const response = await fetch("/api/applications/apply", {
+        method: "POST",
+        body: formData,
+      });
 
-    localStorage.setItem("applications", JSON.stringify(applications));
-    alert("Application submitted successfully");
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to submit application");
+        return;
+      }
+
+      alert("Application submitted successfully");
+
+      // reset form
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        role: "Software Tester",
+        resume: null,
+      });
+    } catch (error) {
+      alert("Server error. Please try again.");
+    }
   };
 
   return (
@@ -42,21 +61,33 @@ function ApplicantDashboard() {
 
           <input
             placeholder="Full Name"
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            value={form.name}
+            onChange={(e) =>
+              setForm({ ...form, name: e.target.value })
+            }
           />
 
           <input
             placeholder="Email"
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            value={form.email}
+            onChange={(e) =>
+              setForm({ ...form, email: e.target.value })
+            }
           />
 
           <input
             placeholder="Phone Number"
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            value={form.phone}
+            onChange={(e) =>
+              setForm({ ...form, phone: e.target.value })
+            }
           />
 
           <select
-            onChange={(e) => setForm({ ...form, role: e.target.value })}
+            value={form.role}
+            onChange={(e) =>
+              setForm({ ...form, role: e.target.value })
+            }
           >
             <option>Software Tester</option>
             <option>Software Developer</option>
@@ -71,11 +102,15 @@ function ApplicantDashboard() {
 
           <input
             type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={(e) => setForm({ ...form, resume: e.target.files[0] })}
+            accept=".pdf"
+            onChange={(e) =>
+              setForm({ ...form, resume: e.target.files[0] })
+            }
           />
 
-          <button onClick={handleSubmit}>Submit Application</button>
+          <button onClick={handleSubmit}>
+            Submit Application
+          </button>
         </div>
       </div>
     </>
