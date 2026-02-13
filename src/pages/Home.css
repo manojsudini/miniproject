@@ -1,4 +1,4 @@
-/* BASE */
+/* ================= BASE ================= */
 .home-wrapper {
   background: radial-gradient(circle at top, #0f172a, #020617);
   color: #f8fafc;
@@ -7,7 +7,7 @@
   padding: 0 5%;
 }
 
-/* NAVBAR */
+/* ================= NAVBAR ================= */
 .home-nav {
   display: flex;
   justify-content: space-between;
@@ -19,8 +19,12 @@
   font-size: 24px;
   font-weight: 800;
   color: #38bdf8;
+  cursor: grab;
+  user-select: none;
+  display: inline-block;
 }
 
+/* NAV BUTTONS */
 .nav-login {
   background: transparent;
   border: 1px solid #334155;
@@ -28,8 +32,7 @@
   padding: 8px 20px;
   margin-right: 15px;
   border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .nav-login:hover {
@@ -42,17 +45,15 @@
   border: none;
   color: #020617;
   padding: 9px 22px;
-  font-weight: 600;
   border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 600;
 }
 
 .nav-signup:hover {
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
 }
 
-/* HERO */
+/* ================= HERO ================= */
 .home-hero {
   text-align: center;
   padding: 90px 0 70px;
@@ -61,38 +62,17 @@
 .hero-title {
   font-size: 3.6rem;
   font-weight: 800;
-  margin-bottom: 20px;
 }
 
 .changing-word {
   color: #38bdf8;
-  display: inline-block;
-  animation: fadeSlide 2s ease-in-out;
-}
-
-@keyframes fadeSlide {
-  0% {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  30% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
 }
 
 .hero-subtitle {
   color: #94a3b8;
   font-size: 1.2rem;
   max-width: 620px;
-  margin: 0 auto 45px;
+  margin: 20px auto 45px;
 }
 
 /* HERO BUTTONS */
@@ -104,41 +84,44 @@
 
 .btn-main,
 .btn-outline {
-  background: rgba(56, 189, 248, 0.08);
+  background: transparent;
   border: 1.5px solid #38bdf8;
   color: #38bdf8;
-  padding: 15px 38px;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 14px 35px;
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s ease;
 }
 
-/* Hover effect */
+/* Hover blue only */
 .btn-main:hover,
 .btn-outline:hover {
   background: #38bdf8;
   color: #020617;
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(56, 189, 248, 0.45);
 }
 
+/* ================= WORKFLOW ================= */
+.workflow-wrapper {
+  max-width: 1100px;
+  margin: 50px auto;
+}
 
-/* WORKFLOW */
+/* Flip container size fix */
+.workflow-flip {
+  height: 260px;
+}
+
 .workflow-container {
   background: rgba(30, 41, 59, 0.55);
   border: 1px solid #334155;
   border-radius: 22px;
   padding: 45px;
-  margin: 50px auto;
-  max-width: 1100px;
   text-align: center;
+  height: 100%;
 }
 
 .workflow-grid {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   margin-top: 40px;
 }
@@ -157,38 +140,36 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
-  font-weight: bold;
   color: #38bdf8;
+  font-weight: bold;
 }
 
-.workflow-connector {
-  font-size: 26px;
-  color: #475569;
-}
-
-/* ROLES */
+/* ================= ROLE CARDS ================= */
 .roles-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  gap: 40px;
   max-width: 1100px;
   margin: 60px auto 90px;
 }
 
+/* card size stable while flip */
 .role-card {
   background: #1e293b;
   border: 1px solid #334155;
   padding: 38px;
   border-radius: 16px;
+  height: 230px;
+  box-sizing: border-box;
 }
 
+/* TAGS */
 .role-tag {
   display: inline-block;
-  padding: 6px 15px;
+  padding: 6px 18px;
   border-radius: 6px;
   font-weight: 700;
-  font-size: 0.8rem;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .tag-blue {
@@ -201,12 +182,52 @@
   color: #4ade80;
 }
 
+/* BULLET SPACING */
 .role-card ul {
   list-style: none;
   padding: 0;
 }
 
 .role-card li {
-  margin-bottom: 15px;
+  margin-bottom: 14px;
   color: #cbd5e1;
+  line-height: 1.6;
+}
+
+/* ================= FLIP ANIMATION ================= */
+
+/* container */
+.flip-card {
+  perspective: 1200px;
+  cursor: pointer;
+ 
+
+}
+
+/* rotating inner box */
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s ease;
+  transform-style: preserve-3d;
+  transform-origin: center;
+}
+
+/* CLICK flip */
+.flip-card.flipped .flip-inner {
+  transform: rotateY(180deg);
+}
+
+/* front & back faces */
+.flip-front,
+.flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+
+/* backside rotated */
+.flip-back {
+  transform: rotateY(180deg);
 }
