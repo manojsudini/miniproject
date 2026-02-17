@@ -30,3 +30,11 @@ backend/node_modules/
 # Env files
 .env
 backend/.env
+node_modules/
+uploads/
+.env
+dist/
+build/
+*.pdf
+*.log
+.venv/

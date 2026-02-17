@@ -7,13 +7,16 @@ function Navbar({ role }) {
       <div className="nav-left">HireMate</div>
 
       <div className="nav-right">
+
+        {/* APPLICANT NAVBAR */}
         {role === "applicant" && (
           <>
-            <Link to="/applicant">Dashboard</Link>
+            <Link to="/applicant-dashboard">Dashboard</Link>
             <Link to="/applicant">Apply Job</Link>
           </>
         )}
 
+        {/* HR NAVBAR */}
         {role === "hr" && (
           <>
             <Link to="/hr">HR Dashboard</Link>
@@ -21,6 +24,7 @@ function Navbar({ role }) {
           </>
         )}
 
+        {/* ADMIN NAVBAR */}
         {role === "admin" && (
           <>
             <Link to="/admin">Admin Dashboard</Link>

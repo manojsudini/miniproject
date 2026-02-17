@@ -1,11 +1,16 @@
 import Application from "../models/Application.js";
 import streamifier from "streamifier";
 import path from "path";
-import { createRequire } from "module";
+import { v2 as cloudinary } from "cloudinary";
 
-const require = createRequire(import.meta.url);
-const cloudinary = require("../config/cloudinary.cjs");
+/* ===== CLOUDINARY CONFIG ===== */
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
+/* ===== APPLY JOB ===== */
 export const applyJob = async (req, res) => {
   try {
     const { name, email, phone, role } = req.body;
@@ -14,13 +19,17 @@ export const applyJob = async (req, res) => {
       return res.status(400).json({ message: "Resume is required" });
     }
 
-    const fileName = path.parse(req.file.originalname).name;
+    const originalName = path.parse(req.file.originalname).name;
 
+    /* ⭐ FIXED CLOUDINARY UPLOAD */
     const uploadResult = await new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
+      const stream = cloudinary.uploader.upload_stream(
         {
           folder: "hiremate_resumes",
-          resource_type: "raw",
+          resource_type: "raw",       // ⭐ IMPORTANT FOR PDF
+          use_filename: true,
+          unique_filename: false,
+          public_id: originalName,
         },
         (error, result) => {
           if (error) reject(error);
@@ -28,10 +37,11 @@ export const applyJob = async (req, res) => {
         }
       );
 
-      streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+      streamifier.createReadStream(req.file.buffer).pipe(stream);
     });
 
-    await Application.create({
+    /* SAVE TO DATABASE */
+    const application = await Application.create({
       name,
       email,
       phone,
@@ -41,7 +51,11 @@ export const applyJob = async (req, res) => {
       status: "ATS Screening",
     });
 
-    res.status(201).json({ message: "Application submitted successfully" });
+    res.status(201).json({
+      message: "Application submitted successfully",
+      application,
+    });
+
   } catch (error) {
     console.error("UPLOAD ERROR:", error);
     res.status(500).json({ message: "Upload failed" });

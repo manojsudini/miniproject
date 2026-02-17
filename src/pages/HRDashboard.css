@@ -19,6 +19,8 @@
   background: rgba(15, 23, 42, 0.9);
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 2; /* ensures button always clickable */
 }
 
 .jd-card select,
@@ -44,6 +46,14 @@
   border-radius: 12px;
   color: #fff;
   cursor: pointer;
+  position: relative;
+  z-index: 3;
+  transition: 0.25s;
+}
+
+.jd-card button:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
 }
 
 /* TABLE */
@@ -67,6 +77,7 @@
   border: none;
   border-radius: 10px;
   color: white;
+  cursor: pointer;
 }
 
 .limit-input-wrapper {
@@ -123,6 +134,7 @@ td {
   background: transparent;
   color: #38bdf8;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 .accept-btn {
@@ -131,6 +143,7 @@ td {
   padding: 6px 10px;
   border-radius: 8px;
   border: none;
+  cursor: pointer;
 }
 
 .reject-btn {
@@ -139,6 +152,7 @@ td {
   padding: 6px 10px;
   border-radius: 8px;
   border: none;
+  cursor: pointer;
 }
 
 .status.accepted {
@@ -149,11 +163,17 @@ td {
 .popup-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+}
+
+/* IMPORTANT: prevents blocking when hidden */
+.popup-overlay.hidden {
+  display: none;
+  pointer-events: none;
 }
 
 .shortlist-modal {
@@ -190,6 +210,7 @@ td {
   padding: 10px 18px;
   border-radius: 10px;
   color: white;
+  cursor: pointer;
 }
 
 .close-btn {
@@ -198,4 +219,5 @@ td {
   padding: 10px 18px;
   border-radius: 10px;
   color: white;
+  cursor: pointer;
 }

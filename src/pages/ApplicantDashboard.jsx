@@ -1,8 +1,11 @@
 import { useState } from "react";
 import "./ApplicantDashboard.css";
 import Navbar from "../components/Navbar.jsx";
+import { useNavigate } from "react-router-dom";
 
 function ApplicantDashboard() {
+  const navigate = useNavigate(); // ⭐ IMPORTANT FIX
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -25,10 +28,13 @@ function ApplicantDashboard() {
     formData.append("resume", form.resume);
 
     try {
-      const response = await fetch("/api/applications/apply", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/applications/apply",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 
@@ -39,7 +45,12 @@ function ApplicantDashboard() {
 
       alert("Application submitted successfully");
 
-      // reset form
+      // ⭐ Save email for dashboard filtering
+      localStorage.setItem("applicantEmail", form.email);
+
+      // ⭐ Redirect to dashboard
+      navigate("/applicant-dashboard");
+
       setForm({
         name: "",
         email: "",
@@ -47,7 +58,9 @@ function ApplicantDashboard() {
         role: "Software Tester",
         resume: null,
       });
+
     } catch (error) {
+      console.error(error);
       alert("Server error. Please try again.");
     }
   };
@@ -55,6 +68,7 @@ function ApplicantDashboard() {
   return (
     <>
       <Navbar role="applicant" />
+
       <div className="applicant-page">
         <div className="apply-card">
           <h3>Apply for Job</h3>
