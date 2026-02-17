@@ -38,3 +38,5 @@ build/
 *.pdf
 *.log
 .venv/
+venv/
+backend/AI/venv/
