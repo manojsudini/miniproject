@@ -8,6 +8,7 @@ import ApplicantDashboard from "./pages/ApplicantDashboard";
 import HRDashboard from "./pages/HRDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ApplicantStatusDashboard from "./pages/ApplicantStatusDashboard";
+import TrackStatus from "./pages/TrackStatus";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/applicant" element={<ApplicantDashboard />} />
         <Route path="/hr" element={<HRDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/track" element={<TrackStatus />} />
       </Routes>
     </BrowserRouter>
   );
