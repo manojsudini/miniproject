@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 function ApplicantDashboard() {
   const navigate = useNavigate(); // ⭐ IMPORTANT FIX
+  <button onClick={() => navigate("/track")}>
+  Track Application
+</button>
 
   const [form, setForm] = useState({
     name: "",
