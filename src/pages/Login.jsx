@@ -39,11 +39,15 @@ function Login() {
     }
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, role }),
-      });
+      /* ✅ FIXED BACKEND URL */
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, role }),
+        }
+      );
 
       const data = await response.json();
 
@@ -56,14 +60,18 @@ function Login() {
       setMessage("Login successful. Redirecting...");
       setMessageType("success");
 
+      /* STORE TOKEN + ROLE */
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
+      const expiryTime = Date.now() + 60 * 60 * 1000; // 1 hour
+       localStorage.setItem("expiry", expiryTime);
 
       setTimeout(() => {
         if (data.role === "applicant") navigate("/applicant");
         if (data.role === "hr") navigate("/hr");
         if (data.role === "admin") navigate("/admin");
       }, 900);
+
     } catch {
       setMessage("Server error. Please try again.");
       setMessageType("error");

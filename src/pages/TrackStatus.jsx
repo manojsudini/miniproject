@@ -12,24 +12,23 @@ const steps = [
 function TrackStatus() {
   const [applications, setApplications] = useState([]);
 
+  /* FETCH USER APPLICATIONS FROM BACKEND */
   useEffect(() => {
-    setApplications([
-      {
-        jobRole: "Software Tester",
-        status: "UNDER_REVIEW",
-        createdAt: new Date()
-      },
-      {
-        jobRole: "Frontend Developer",
-        status: "SHORTLISTED",
-        createdAt: new Date()
-      },
-      {
-        jobRole: "Data Analyst",
-        status: "APPLIED",
-        createdAt: new Date()
+    fetch("http://localhost:5000/api/applications/my-applications", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       }
-    ]);
+    })
+      .then(res => res.json())
+      .then(data => {
+        const formatted = data.map(app => ({
+          jobRole: app.role,
+          status: app.status,
+          createdAt: app.createdAt
+        }));
+        setApplications(formatted);
+      })
+      .catch(err => console.error("Dashboard fetch error:", err));
   }, []);
 
   const getProgressPercent = (status) => {
@@ -54,93 +53,108 @@ function TrackStatus() {
 
   const summary = {
     total: applications.length,
-    review: applications.filter((a) => a.status === "UNDER_REVIEW").length,
-    shortlisted: applications.filter((a) => a.status === "SHORTLISTED").length,
-    accepted: applications.filter((a) => a.status === "ACCEPTED").length
+    review: applications.filter(a => a.status === "UNDER_REVIEW").length,
+    shortlisted: applications.filter(a => a.status === "SHORTLISTED").length,
+    accepted: applications.filter(a => a.status === "ACCEPTED").length
   };
 
   return (
     <>
-        <Navbar/>
-    <div className="track-wrapper">
+      <Navbar />
 
-      {/* Summary */}
-      <div className="summary-bar">
-        <div className="summary-card">Total: {summary.total}</div>
-        <div className="summary-card">Review: {summary.review}</div>
-        <div className="summary-card">Shortlisted: {summary.shortlisted}</div>
-        <div className="summary-card">Accepted: {summary.accepted}</div>
-      </div>
+      <div className="track-wrapper">
 
-      {/* Grid Layout */}
-      <div className="cards-grid">
-        {applications.map((app, index) => {
-          const currentStep = steps.findIndex(
-            (step) => step.key === app.status
-          );
+        {/* SUMMARY BAR */}
+        <div className="summary-bar">
+          <div className="summary-card">Total: {summary.total}</div>
+          <div className="summary-card">Review: {summary.review}</div>
+          <div className="summary-card">Shortlisted: {summary.shortlisted}</div>
+          <div className="summary-card">Accepted: {summary.accepted}</div>
+        </div>
 
-          const progress = getProgressPercent(app.status);
+        {/* APPLICATION CARDS */}
+        <div className="cards-grid">
+          {applications.map((app, index) => {
+            const currentStep = steps.findIndex(
+              step => step.key === app.status
+            );
 
-          return (
-            <div className="flip-card" key={index}>
-              <div className="flip-inner">
+            const progress = getProgressPercent(app.status);
 
-                {/* FRONT SIDE */}
-                <div className="flip-front">
-                  <h2 className="status-title">
-                    {app.status.replace("_", " ")}
-                  </h2>
+            return (
+              <div className="flip-card" key={index}>
+                <div className="flip-inner">
 
-                  <h4 className="job-role">{app.jobRole}</h4>
+                  {/* FRONT SIDE */}
+                  <div className="flip-front">
+                    <h2 className="status-title">
+                      {app.status.replace(/_/g, " ")}
+                    </h2>
 
-                  <div className="timeline">
-                    {steps.map((step, i) => {
-                      const completed = i <= currentStep;
-                      return (
-                        <div className="timeline-step-wrapper" key={step.key}>
-                          <div className="timeline-step">
-                            <div className={`dot ${completed ? "active" : ""}`} />
-                            {i < steps.length - 1 && (
-                              <div className={`line ${i < currentStep ? "active" : ""}`} />
-                            )}
+                    <h4 className="job-role">{app.jobRole}</h4>
+
+                    <div className="timeline">
+                      {steps.map((step, i) => {
+                        const completed = i <= currentStep;
+                        return (
+                          <div
+                            className="timeline-step-wrapper"
+                            key={step.key}
+                          >
+                            <div className="timeline-step">
+                              <div className={`dot ${completed ? "active" : ""}`} />
+                              {i < steps.length - 1 && (
+                                <div
+                                  className={`line ${
+                                    i < currentStep ? "active" : ""
+                                  }`}
+                                />
+                              )}
+                            </div>
+                            <span
+                              className={`step-label ${
+                                completed ? "active-label" : ""
+                              }`}
+                            >
+                              {step.label}
+                            </span>
                           </div>
-                          <span className={`step-label ${completed ? "active-label" : ""}`}>
-                            {step.label}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="progress-section">
-                    <div className="progress-label">
-                      Progress: {progress}%
+                        );
+                      })}
                     </div>
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${progress}%` }}
-                      />
+
+                    <div className="progress-section">
+                      <div className="progress-label">
+                        Progress: {progress}%
+                      </div>
+                      <div className="progress-bar">
+                        <div
+                          className="progress-fill"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* BACK SIDE */}
-                <div className="flip-back">
-                  <h3>Application Details</h3>
-                  <p><strong>Role:</strong> {app.jobRole}</p>
-                  <p><strong>Status:</strong> {app.status}</p>
-                  <p><strong>Applied On:</strong> {new Date(app.createdAt).toLocaleDateString()}</p>
-                  <p>⏳ {getEstimatedTime(app.status)}</p>
-                </div>
+                  {/* BACK SIDE */}
+                  <div className="flip-back">
+                    <h3>Application Details</h3>
+                    <p><strong>Role:</strong> {app.jobRole}</p>
+                    <p><strong>Status:</strong> {app.status}</p>
+                    <p>
+                      <strong>Applied On:</strong>{" "}
+                      {new Date(app.createdAt).toLocaleDateString()}
+                    </p>
+                    <p>⏳ {getEstimatedTime(app.status)}</p>
+                  </div>
 
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
-    </div>
+      </div>
     </>
   );
 }

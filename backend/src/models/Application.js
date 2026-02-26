@@ -9,10 +9,17 @@ const applicationSchema = new mongoose.Schema({
   resumeUrl: String,
   text: String,
   atsScore: Number,
+
   status: {
     type: String,
     default: "Pending"
-  }
+  },
+
+   
+  interviewDate: String,
+  interviewTime: String,
+  interviewMode: String
+
 }, { timestamps: true });
 
 export default mongoose.model("Application", applicationSchema);

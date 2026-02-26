@@ -5,6 +5,7 @@ import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import Application from "../models/Application.js";
 import cloudinary from "../config/cloudinary.js";
 import { sendAcceptanceMail } from "../utils/sendMail.js";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -23,7 +24,6 @@ async function extractTextFromPDF(filePath) {
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-
       const strings = content.items.map(item => item.str);
 
       text += strings.join(" ")
@@ -42,7 +42,16 @@ async function extractTextFromPDF(filePath) {
 
 router.post("/apply", upload.single("resume"), async (req, res) => {
   try {
-    const { name, email, phone, role } = req.body;
+
+    const { name, phone, role } = req.body;
+
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
 
     if (!req.file) {
       return res.status(400).json({
@@ -50,10 +59,8 @@ router.post("/apply", upload.single("resume"), async (req, res) => {
       });
     }
 
-    /* Extract text for ATS */
     const extractedText = await extractTextFromPDF(req.file.path);
 
-    /* Upload PDF to Cloudinary */
     const result = await cloudinary.uploader.upload(req.file.path, {
       resource_type: "raw",
       folder: "hiremate_resumes",
@@ -61,7 +68,6 @@ router.post("/apply", upload.single("resume"), async (req, res) => {
       unique_filename: false
     });
 
-    /* Save to MongoDB */
     const application = new Application({
       name,
       email,
@@ -71,12 +77,11 @@ router.post("/apply", upload.single("resume"), async (req, res) => {
       resumeUrl: result.secure_url,
       text: extractedText,
       atsScore: 0,
-      status: "Pending"
+      status: "APPLIED"
     });
 
     await application.save();
 
-    /* Delete local temp file */
     fs.unlinkSync(req.file.path);
 
     res.json({
@@ -91,7 +96,7 @@ router.post("/apply", upload.single("resume"), async (req, res) => {
   }
 });
 
-/* ================= GET APPLICATIONS ================= */
+/* ================= GET ALL APPLICATIONS (ADMIN) ================= */
 
 router.get("/", async (req, res) => {
   try {
@@ -99,6 +104,34 @@ router.get("/", async (req, res) => {
     res.json(apps);
   } catch (err) {
     console.error(err);
+    res.status(500).json({
+      message: "Error fetching applications"
+    });
+  }
+});
+
+/* ================= SECURE USER DASHBOARD ================= */
+
+router.get("/my-applications", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        message: "Unauthorized"
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const apps = await Application.find({
+      email: decoded.email
+    });
+
+    res.json(apps);
+
+  } catch (err) {
+    console.error("DASHBOARD ERROR:", err);
     res.status(500).json({
       message: "Error fetching applications"
     });
@@ -123,13 +156,14 @@ router.put("/status/:id", async (req, res) => {
       });
     }
 
-    /* Send mail when accepted */
-    if (status === "Accepted") {
-      await sendAcceptanceMail(
-        application.email,
-        application.name
-      );
-    }
+    if (status === "ACCEPTED") {
+  try {
+    await sendAcceptanceMail(application.email, application.name);
+    console.log("Acceptance mail sent");
+  } catch (mailErr) {
+    console.error("Mail sending failed:", mailErr.message);
+  }
+}
 
     res.json(application);
 
@@ -137,6 +171,41 @@ router.put("/status/:id", async (req, res) => {
     console.error("STATUS UPDATE ERROR:", err);
     res.status(500).json({
       message: "Status update failed"
+    });
+  }
+});
+
+/* ================= ⭐ NEW INTERVIEW SCHEDULING ================= */
+
+router.put("/schedule/:id", async (req, res) => {
+  try {
+    const { interviewDate, interviewTime, interviewMode } = req.body;
+
+    const updatedApplication = await Application.findByIdAndUpdate(
+      req.params.id,
+      {
+        interviewDate,
+        interviewTime,
+        interviewMode
+      },
+      { new: true }
+    );
+
+    if (!updatedApplication) {
+      return res.status(404).json({
+        message: "Application not found"
+      });
+    }
+
+    res.json({
+      message: "Interview scheduled successfully",
+      updatedApplication
+    });
+
+  } catch (err) {
+    console.error("INTERVIEW SCHEDULE ERROR:", err);
+    res.status(500).json({
+      message: "Interview scheduling failed"
     });
   }
 });

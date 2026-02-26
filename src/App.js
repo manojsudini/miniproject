@@ -7,23 +7,59 @@ import Signup from "./pages/Signup";
 import ApplicantDashboard from "./pages/ApplicantDashboard";
 import HRDashboard from "./pages/HRDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
-import ApplicantStatusDashboard from "./pages/ApplicantStatusDashboard";
 import TrackStatus from "./pages/TrackStatus";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/applicant-dashboard" element={<ApplicantStatusDashboard />} />
-        {/* DASHBOARDS */}
-        <Route path="/applicant" element={<ApplicantDashboard />} />
-        <Route path="/hr" element={<HRDashboard />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/track" element={<TrackStatus />} />
+
+        {/* APPLICANT ROUTES */}
+        <Route
+          path="/applicant"
+          element={
+            <ProtectedRoute roleRequired="applicant">
+              <ApplicantDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/track"
+          element={
+            <ProtectedRoute roleRequired="applicant">
+              <TrackStatus />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* HR ROUTES */}
+        <Route
+          path="/hr"
+          element={
+            <ProtectedRoute roleRequired="hr">
+              <HRDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN ROUTES */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roleRequired="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );

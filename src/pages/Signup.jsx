@@ -36,7 +36,8 @@ function Signup() {
     }
 
     try {
-      const response = await fetch("/api/auth/signup", {
+      // ⭐ FIXED API URL
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, role }),
@@ -56,6 +57,7 @@ function Signup() {
       setTimeout(() => {
         navigate("/login", { state: { role } });
       }, 1200);
+
     } catch (err) {
       setMessage("Server error. Please try again.");
       setMessageType("error");

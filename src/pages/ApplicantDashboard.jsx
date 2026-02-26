@@ -4,10 +4,7 @@ import Navbar from "../components/Navbar.jsx";
 import { useNavigate } from "react-router-dom";
 
 function ApplicantDashboard() {
-  const navigate = useNavigate(); // ⭐ IMPORTANT FIX
-  <button onClick={() => navigate("/track")}>
-  Track Application
-</button>
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
@@ -35,6 +32,9 @@ function ApplicantDashboard() {
         "http://localhost:5000/api/applications/apply",
         {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          },
           body: formData,
         }
       );
@@ -48,11 +48,8 @@ function ApplicantDashboard() {
 
       alert("Application submitted successfully");
 
-      // ⭐ Save email for dashboard filtering
-      localStorage.setItem("applicantEmail", form.email);
-
-      // ⭐ Redirect to dashboard
-      navigate("/applicant-dashboard");
+      // Redirect to Track page after apply
+      navigate("/track");
 
       setForm({
         name: "",

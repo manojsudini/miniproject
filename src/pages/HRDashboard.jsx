@@ -12,6 +12,8 @@ function HRDashboard() {
   const [results, setResults] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     document.body.style.overflow = showPopup ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
@@ -20,7 +22,10 @@ function HRDashboard() {
   /* FETCH APPLICATIONS */
   const fetchApplications = async () => {
     const { data } = await axios.get(
-      "http://localhost:5000/api/applications"
+      "http://localhost:5000/api/applications",
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
     );
     return data;
   };
@@ -70,11 +75,9 @@ function HRDashboard() {
         analyzedResults.push({
           _id: app._id,
           name: app.name,
-          percentage: Math.round(
-            response.data.percentage || 0
-          ),
+          percentage: Math.round(response.data.percentage || 0),
           resumeUrl: app.resumeUrl,
-          status: app.status || "Pending"
+          status: app.status || "APPLIED"
         });
       }
 
@@ -94,7 +97,8 @@ function HRDashboard() {
     try {
       await axios.put(
         `http://localhost:5000/api/applications/status/${id}`,
-        { status }
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       alert(`Candidate ${status}`);
@@ -113,10 +117,10 @@ function HRDashboard() {
   };
 
   const shortlisted = allResults.filter(
-    r => r.status === "Accepted"
+    r => r.status === "ACCEPTED"
   );
 
-  /* ⭐ DOWNLOAD SHORTLISTED NAMES PDF */
+  /* DOWNLOAD SHORTLISTED PDF */
   const downloadShortlistedPDF = () => {
     const doc = new jsPDF();
 
@@ -173,7 +177,6 @@ function HRDashboard() {
           </button>
         </div>
 
-        {/* MAIN RESULTS */}
         {results.length > 0 && (
           <div className="table-card">
             <div className="table-header">
@@ -213,19 +216,17 @@ function HRDashboard() {
                       <td>{res.name}</td>
 
                       <td>
-                        {res.resumeUrl ? (
-                          <button
-                            className="view-btn"
-                            onClick={() =>
-                              window.open(
-                                `https://docs.google.com/gview?url=${res.resumeUrl}&embedded=true`,
-                                "_blank"
-                              )
-                            }
-                          >
-                            View PDF
-                          </button>
-                        ) : "No Resume"}
+                        <button
+                          className="view-btn"
+                          onClick={() =>
+                            window.open(
+                              `https://docs.google.com/gview?url=${res.resumeUrl}&embedded=true`,
+                              "_blank"
+                            )
+                          }
+                        >
+                          View PDF
+                        </button>
                       </td>
 
                       <td className="match">
@@ -233,30 +234,28 @@ function HRDashboard() {
                       </td>
 
                       <td>
-                        {res.status === "Pending" ? (
+                        {res.status === "APPLIED" ? (
                           <>
                             <button
                               className="accept-btn"
                               onClick={() =>
-                                updateStatus(res._id, "Accepted")
+                                updateStatus(res._id, "UNDER_REVIEW")
                               }
                             >
-                              Accept
+                              Review
                             </button>
 
                             <button
                               className="reject-btn"
                               onClick={() =>
-                                updateStatus(res._id, "Rejected")
+                                updateStatus(res._id, "ACCEPTED")
                               }
                             >
-                              Reject
+                              Accept
                             </button>
                           </>
                         ) : (
-                          <span
-                            className={`status ${res.status.toLowerCase()}`}
-                          >
+                          <span className="status">
                             {res.status}
                           </span>
                         )}
@@ -269,7 +268,7 @@ function HRDashboard() {
           </div>
         )}
 
-        {/* SHORTLIST POPUP */}
+        {/* ⭐ SHORTLIST POPUP */}
         {showPopup && (
           <div className="popup-overlay">
             <div className="shortlist-modal">
@@ -278,9 +277,9 @@ function HRDashboard() {
               <table>
                 <thead>
                   <tr>
-                    <th>CANDIDATE</th>
-                    <th>RESUME</th>
-                    <th>MATCH %</th>
+                    <th>Name</th>
+                    <th>Resume</th>
+                    <th>Match %</th>
                   </tr>
                 </thead>
 
@@ -303,20 +302,19 @@ function HRDashboard() {
                         </button>
                       </td>
 
-                      <td className="match">
-                        {c.percentage}%
-                      </td>
+                      <td>{c.percentage}%</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
 
+              {/* ⭐ FIXED BUTTONS */}
               <div className="shortlist-actions">
                 <button
                   className="download-all-btn"
                   onClick={downloadShortlistedPDF}
                 >
-                  Download Shortlisted Names PDF
+                  Download PDF
                 </button>
 
                 <button

@@ -1,3 +1,5 @@
+/* ================= PAGE ================= */
+
 .hr-page {
   min-height: 100vh;
   padding: 90px 40px 40px;
@@ -11,7 +13,8 @@
   margin-bottom: 30px;
 }
 
-/* JD CARD */
+/* ================= JD CARD ================= */
+
 .jd-card {
   max-width: 720px;
   margin: 0 auto 40px;
@@ -20,7 +23,7 @@
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   position: relative;
-  z-index: 2; /* ensures button always clickable */
+  z-index: 2;
 }
 
 .jd-card select,
@@ -46,8 +49,6 @@
   border-radius: 12px;
   color: #fff;
   cursor: pointer;
-  position: relative;
-  z-index: 3;
   transition: 0.25s;
 }
 
@@ -56,7 +57,8 @@
   opacity: 0.9;
 }
 
-/* TABLE */
+/* ================= TABLE ================= */
+
 .table-card {
   max-width: 1100px;
   margin: 0 auto;
@@ -126,10 +128,10 @@ td {
   color: #38bdf8;
 }
 
-.view-btn,
-.download-btn {
-  margin-right: 6px;
-  padding: 6px 10px;
+/* BUTTONS */
+
+.view-btn {
+  padding: 6px 12px;
   border: 1px solid #38bdf8;
   background: transparent;
   color: #38bdf8;
@@ -140,7 +142,7 @@ td {
 .accept-btn {
   background: #16a34a;
   color: white;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
@@ -149,7 +151,7 @@ td {
 .reject-btn {
   background: #dc2626;
   color: white;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
@@ -159,7 +161,8 @@ td {
   color: #22c55e;
 }
 
-/* POPUP */
+/* ================= POPUP MODAL ================= */
+
 .popup-overlay {
   position: fixed;
   inset: 0;
@@ -170,22 +173,19 @@ td {
   z-index: 9999;
 }
 
-/* IMPORTANT: prevents blocking when hidden */
-.popup-overlay.hidden {
-  display: none;
-  pointer-events: none;
-}
-
 .shortlist-modal {
   width: 900px;
   max-width: 95%;
   max-height: 80vh;
   background: rgba(15, 23, 42, 0.96);
   border-radius: 18px;
-  padding: 22px;
+  padding: 30px 40px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
 }
+
+/* Scroll inside popup table */
 
 .shortlist-table-wrapper {
   max-height: 360px;
@@ -198,16 +198,18 @@ td {
   background: #020617;
 }
 
+/* Popup actions */
+
 .shortlist-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .download-all-btn {
   background: linear-gradient(135deg, #22c55e, #16a34a);
   border: none;
-  padding: 10px 18px;
+  padding: 12px 20px;
   border-radius: 10px;
   color: white;
   cursor: pointer;
@@ -216,7 +218,7 @@ td {
 .close-btn {
   background: #dc2626;
   border: none;
-  padding: 10px 18px;
+  padding: 12px 20px;
   border-radius: 10px;
   color: white;
   cursor: pointer;
