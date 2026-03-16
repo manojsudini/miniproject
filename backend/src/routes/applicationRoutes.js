@@ -26,12 +26,14 @@ async function extractTextFromPDF(filePath) {
       const content = await page.getTextContent();
       const strings = content.items.map(item => item.str);
 
-      text += strings.join(" ")
+      text += strings
+        .join(" ")
         .replace(/\s+/g, " ")
         .replace(/[^\w\s.,]/g, "") + "\n";
     }
 
     return text.trim();
+
   } catch (error) {
     console.error("PDF Extraction Error:", error);
     return "";
@@ -77,7 +79,8 @@ router.post("/apply", upload.single("resume"), async (req, res) => {
       resumeUrl: result.secure_url,
       text: extractedText,
       atsScore: 0,
-      status: "APPLIED"
+      status: "APPLIED",
+      rejectionReason: ""
     });
 
     await application.save();
@@ -96,7 +99,7 @@ router.post("/apply", upload.single("resume"), async (req, res) => {
   }
 });
 
-/* ================= GET ALL APPLICATIONS (ADMIN) ================= */
+/* ================= GET ALL APPLICATIONS (HR / ADMIN) ================= */
 
 router.get("/", async (req, res) => {
   try {
@@ -110,10 +113,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* ================= SECURE USER DASHBOARD ================= */
+/* ================= USER DASHBOARD ================= */
 
 router.get("/my-applications", async (req, res) => {
   try {
+
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
@@ -138,34 +142,43 @@ router.get("/my-applications", async (req, res) => {
   }
 });
 
-/* ================= UPDATE STATUS + SEND MAIL ================= */
+/* ================= UPDATE STATUS ================= */
 
 router.put("/status/:id", async (req, res) => {
   try {
-    const { status } = req.body;
 
-    const application = await Application.findByIdAndUpdate(
+    const { status, rejectionReason } = req.body;
+
+    const updatedApplication = await Application.findByIdAndUpdate(
       req.params.id,
-      { status },
+      {
+        status,
+        rejectionReason: rejectionReason || ""
+      },
       { new: true }
     );
 
-    if (!application) {
+    if (!updatedApplication) {
       return res.status(404).json({
         message: "Application not found"
       });
     }
 
-    if (status === "ACCEPTED") {
-  try {
-    await sendAcceptanceMail(application.email, application.name);
-    console.log("Acceptance mail sent");
-  } catch (mailErr) {
-    console.error("Mail sending failed:", mailErr.message);
-  }
-}
+    /* SEND MAIL IF ACCEPTED */
 
-    res.json(application);
+    if (status === "ACCEPTED") {
+      try {
+        await sendAcceptanceMail(
+          updatedApplication.email,
+          updatedApplication.name
+        );
+        console.log("Acceptance mail sent");
+      } catch (mailErr) {
+        console.error("Mail sending failed:", mailErr.message);
+      }
+    }
+
+    res.json(updatedApplication);
 
   } catch (err) {
     console.error("STATUS UPDATE ERROR:", err);
@@ -175,10 +188,11 @@ router.put("/status/:id", async (req, res) => {
   }
 });
 
-/* ================= ⭐ NEW INTERVIEW SCHEDULING ================= */
+/* ================= INTERVIEW SCHEDULING ================= */
 
 router.put("/schedule/:id", async (req, res) => {
   try {
+
     const { interviewDate, interviewTime, interviewMode } = req.body;
 
     const updatedApplication = await Application.findByIdAndUpdate(

@@ -1,208 +1,791 @@
-/* ===== GLOBAL RESET ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
+/* ========================= */
+/* PART 1 – Animations + Layout */
+/* ========================= */
 
-/* ===== PAGE BACKGROUND ===== */
-.signup-container {
-  height: 100vh;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  background-size: 400% 400%;
-  animation: bgMove 12s ease infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Animations */
 
-/* ===== SIGNUP CARD ===== */
-.signup-card {
-  background: rgba(20, 20, 20, 0.78);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 35px;
-  width: 380px;
-  border-radius: 14px;
-  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.75);
-  color: white;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  animation: fadeIn 0.8s ease-in-out;
-}
+@keyframes gradientShift {
 
-/* ===== TITLE ===== */
-.signup-card h2 {
-  font-size: 28px;
-  font-weight: 700;
-  background: linear-gradient(90deg, #4facfe, #00f2fe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 6px;
-}
-
-/* ===== SUBTITLE ===== */
-.subtitle {
-  font-size: 13px;
-  color: #b5b5b5;
-  margin-bottom: 22px;
-}
-
-/* ===== INPUTS ===== */
-.signup-card input,
-.signup-card select {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  color: white;
-  outline: none;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
-}
-
-.signup-card input::placeholder {
-  color: #aaa;
-}
-
-/* ===== SELECT FIX ===== */
-.signup-card select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 18px;
-  padding-right: 40px;
-  cursor: pointer;
-}
-
-.signup-card input:focus,
-.signup-card select:focus {
-  border-color: #4facfe;
-  box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.35);
-}
-
-/* ===== BUTTON ===== */
-.signup-card button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  border: none;
-  border-radius: 10px;
-  color: black;
-  font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.signup-card button:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 12px 28px rgba(79, 172, 254, 0.55);
-}
-
-/* ===== LINK ===== */
-.link {
-  margin-top: 20px;
-  padding-top: 10px;
-  font-size: 14px;
-  color: #ccc;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.link a {
-  color: #4facfe;
-  text-decoration: none;
-}
-
-.link a:hover {
-  text-decoration: underline;
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  0%,100%{
+    background-position:0% 50%;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  50%{
+    background-position:100% 50%;
   }
+
 }
 
-@keyframes bgMove {
-  0% {
-    background-position: 0% 50%;
+@keyframes float {
+
+  0%,100%{
+    transform:translateY(0px) rotate(0deg);
   }
-  50% {
-    background-position: 100% 50%;
+
+  33%{
+    transform:translateY(-20px) rotate(3deg);
   }
-  100% {
-    background-position: 0% 50%;
+
+  66%{
+    transform:translateY(15px) rotate(-3deg);
   }
-}
-/* ===== JOB ROLE TITLE ===== */
-.role-title {
-  text-align: left;
-  font-size: 14px;
-  color: #b5b5b5;
-  margin-bottom: 8px;
+
 }
 
-/* ===== ROLE SELECTION CARDS ===== */
-.role-group {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 15px;
+@keyframes floatReverse {
+
+  0%,100%{
+    transform:translateY(0px) rotate(0deg);
+  }
+
+  33%{
+    transform:translateY(20px) rotate(-3deg);
+  }
+
+  66%{
+    transform:translateY(-15px) rotate(3deg);
+  }
+
 }
 
-.role-group label {
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 13px;
-  transition: all 0.25s ease;
+@keyframes particleFloat{
+
+  0%{
+    transform:translateY(100vh) rotate(0deg);
+    opacity:0;
+  }
+
+  10%{
+    opacity:0.4;
+  }
+
+  90%{
+    opacity:0.4;
+  }
+
+  100%{
+    transform:translateY(-100vh) rotate(720deg);
+    opacity:0;
+  }
+
 }
 
-.role-group input {
-  display: none;
+@keyframes pulse{
+
+  0%,100%{
+    transform:scale(1);
+    opacity:0.5;
+  }
+
+  50%{
+    transform:scale(1.05);
+    opacity:0.7;
+  }
+
 }
 
-.role-group label:has(input:checked) {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  color: black;
-  font-weight: bold;
-  box-shadow: 0 6px 15px rgba(79, 172, 254, 0.45);
+@keyframes shimmer{
+
+  0%{
+    transform:translateX(-100%) rotate(45deg);
+  }
+
+  100%{
+    transform:translateX(200%) rotate(45deg);
+  }
+
 }
 
-select option {
-  background-color: #1e293b;
-  color: #ffffff;
+/* ========================= */
+/* Main Container */
+/* ========================= */
+
+.login-container{
+
+  min-height:100vh;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  background:linear-gradient(-45deg,#020617,#0f172a,#020617,#0f172a);
+
+  background-size:400% 400%;
+
+  animation:gradientShift 20s ease infinite;
+
+  position:relative;
+
+  overflow:hidden;
+
+  padding:20px;
+
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+
 }
 
-/* ===== FORM MESSAGE (TEXT ONLY) ===== */
-.form-message {
-  margin-bottom: 14px;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-  letter-spacing: 0.2px;
+/* ========================= */
+/* Floating Orbs */
+/* ========================= */
+
+.orb{
+
+  position:absolute;
+
+  border-radius:50%;
+
+  filter:blur(80px);
+
+  opacity:0.35;
+
+  z-index:0;
+
 }
 
-.form-message.success {
-  color: #22c55e; /* green */
+.orb-1{
+
+  width:400px;
+
+  height:400px;
+
+  background:linear-gradient(135deg,#b8962e,#d4af37);
+
+  top:-100px;
+
+  left:-100px;
+
+  animation:float 12s ease-in-out infinite;
+
 }
 
-.form-message.error {
-  color: #ef4444; /* red */
+.orb-2{
+
+  width:350px;
+
+  height:350px;
+
+  background:linear-gradient(135deg,#d4af37,#e6c65a);
+
+  bottom:-100px;
+
+  right:-100px;
+
+  animation:floatReverse 14s ease-in-out infinite;
+
+}
+
+.orb-3{
+
+  width:250px;
+
+  height:250px;
+
+  background:linear-gradient(135deg,#e6c65a,#f1d97a);
+
+  top:50%;
+
+  right:15%;
+
+  transform:translateY(-50%);
+
+  animation:pulse 10s ease-in-out infinite;
+
+}
+
+/* ========================= */
+/* Particles */
+/* ========================= */
+
+.particle{
+
+  position:absolute;
+
+  background:linear-gradient(135deg,#d4af37,#e6c65a);
+
+  border-radius:50%;
+
+  animation:particleFloat linear infinite;
+
+  pointer-events:none;
+
+  opacity:0.35;
+
+  z-index:1;
+
+}
+
+/* ========================= */
+/* Grid Overlay */
+/* ========================= */
+
+.grid-overlay{
+
+  position:absolute;
+
+  inset:0;
+
+  background-image:
+  linear-gradient(rgba(212,175,55,0.05) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(212,175,55,0.05) 1px,transparent 1px);
+
+  background-size:50px 50px;
+
+  z-index:0;
+
+}
+
+/* ========================= */
+/* Login Card */
+/* ========================= */
+
+.login-card{
+
+  position:relative;
+
+  background:#111827;
+
+  backdrop-filter:blur(24px);
+
+  border-radius:20px;
+
+  padding:48px;
+
+  width:100%;
+
+  max-width:420px;
+
+  border:1px solid rgba(212,175,55,0.25);
+
+  box-shadow:
+  0 10px 40px rgba(0,0,0,0.7),
+  0 0 40px rgba(212,175,55,0.15);
+
+  overflow:hidden;
+
+  z-index:10;
+
+}
+
+/* Card shimmer */
+
+.login-card::before{
+
+  content:'';
+
+  position:absolute;
+
+  top:0;
+
+  left:-100%;
+
+  width:100%;
+
+  height:100%;
+
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(212,175,55,0.08),
+    transparent
+  );
+
+  animation:shimmer 6s infinite;
+
+}
+
+/* ========================= */
+/* Icon */
+/* ========================= */
+
+.icon-container{
+
+  display:flex;
+
+  justify-content:center;
+
+  margin-bottom:24px;
+
+}
+
+.icon-wrapper{
+
+  width:64px;
+
+  height:64px;
+
+  background:linear-gradient(135deg,#d4af37,#e6c65a);
+
+  border-radius:16px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  animation:pulse 3s ease-in-out infinite;
+
+  box-shadow:0 10px 30px rgba(212,175,55,0.4);
+
+}
+
+.icon-wrapper svg{
+
+  width:32px;
+
+  height:32px;
+
+  color:white;
+
+  display:block;
+
+}
+
+/* ========================= */
+/* Typography */
+/* ========================= */
+
+.login-card h2{
+
+  color:#d4af37;
+
+  font-size:28px;
+
+  font-weight:700;
+
+  text-align:center;
+
+  margin:0 0 8px 0;
+
+}
+
+.subtitle{
+
+  color:#9ca3af;
+
+  font-size:14px;
+
+  text-align:center;
+
+  margin:0 0 32px 0;
+
+}
+/* ========================= */
+/* PART 2 – Forms + Buttons */
+/* ========================= */
+
+/* Messages */
+
+.form-message{
+
+  padding:14px 18px;
+
+  border-radius:12px;
+
+  margin-bottom:20px;
+
+  font-size:14px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+}
+
+.form-message.error{
+
+  background:rgba(239,68,68,0.15);
+
+  border:1px solid rgba(239,68,68,0.3);
+
+  color:#f87171;
+
+}
+
+.form-message.success{
+
+  background:rgba(212,175,55,0.12);
+
+  border:1px solid rgba(212,175,55,0.35);
+
+  color:#e6c65a;
+
+}
+
+/* ========================= */
+/* Input Groups */
+/* ========================= */
+
+.input-group{
+
+  position:relative;
+
+  margin-bottom:18px;
+
+}
+
+/* Inputs */
+
+.input-group input,
+.input-group select{
+
+  width:100%;
+
+  padding:16px 18px 16px 50px;
+
+  background:#020617;
+
+  border:1px solid rgba(212,175,55,0.25);
+
+  border-radius:12px;
+
+  color:#e5e7eb;
+
+  font-size:15px;
+
+  outline:none;
+
+  transition:all 0.3s ease;
+
+}
+
+/* Placeholder */
+
+.input-group input::placeholder{
+
+  color:#9ca3af;
+
+}
+
+/* Focus */
+
+.input-group input:focus,
+.input-group select:focus{
+
+  border-color:#d4af37;
+
+  background:#020617;
+
+  box-shadow:0 0 0 3px rgba(212,175,55,0.15);
+
+}
+
+/* Disabled role input */
+
+.input-group input:disabled{
+
+  opacity:1;
+
+  color:#e5e7eb;
+
+  background:#020617;
+
+  cursor:not-allowed;
+
+}
+
+/* Select */
+
+.input-group select{
+
+  cursor:pointer;
+
+  appearance:none;
+
+}
+
+/* ========================= */
+/* Input Icons */
+/* ========================= */
+
+.input-icon{
+
+  position:absolute;
+
+  left:16px;
+
+  top:50%;
+
+  transform:translateY(-50%);
+
+  color:#9ca3af;
+
+  transition:all 0.3s ease;
+
+  pointer-events:none;
+
+}
+
+.input-group input:focus ~ .input-icon,
+.input-group select:focus ~ .input-icon{
+
+  color:#d4af37;
+
+}
+
+/* Select Arrow */
+
+.select-arrow{
+
+  position:absolute;
+
+  right:16px;
+
+  top:50%;
+
+  transform:translateY(-50%);
+
+  color:#9ca3af;
+
+  pointer-events:none;
+
+}
+
+.input-group select:focus ~ .select-arrow{
+
+  color:#d4af37;
+
+  transform:translateY(-50%) rotate(180deg);
+
+}
+
+/* ========================= */
+/* Buttons */
+/* ========================= */
+
+.btn{
+
+  width:100%;
+
+  padding:16px;
+
+  border:none;
+
+  border-radius:12px;
+
+  font-size:16px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:10px;
+
+  margin-top:8px;
+
+  transition:all 0.3s ease;
+
+}
+
+/* Primary Button */
+
+.btn-primary{
+
+  background:linear-gradient(135deg,#d4af37,#e6c65a);
+
+  color:#111827;
+
+  box-shadow:0 6px 20px rgba(212,175,55,0.35);
+
+}
+
+.btn-primary:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:0 10px 30px rgba(212,175,55,0.45);
+
+}
+
+/* Secondary Button */
+
+.btn-secondary{
+
+  background:rgba(212,175,55,0.08);
+
+  border:1px solid rgba(212,175,55,0.35);
+
+  color:#d4af37;
+
+}
+
+.btn-secondary:hover{
+
+  background:rgba(212,175,55,0.18);
+
+}
+
+/* Disabled */
+
+.btn:disabled{
+
+  opacity:0.6;
+
+  cursor:not-allowed;
+
+}
+
+/* ========================= */
+/* Spinner */
+/* ========================= */
+
+@keyframes spin{
+
+  from{
+
+    transform:rotate(0deg);
+
+  }
+
+  to{
+
+    transform:rotate(360deg);
+
+  }
+
+}
+
+.spinner{
+
+  width:20px;
+
+  height:20px;
+
+  border:2px solid rgba(255,255,255,0.2);
+
+  border-top-color:#111827;
+
+  border-radius:50%;
+
+  animation:spin 0.8s linear infinite;
+
+}
+
+/* ========================= */
+/* Links */
+/* ========================= */
+
+.link{
+
+  text-align:center;
+
+  color:#9ca3af;
+
+  font-size:14px;
+
+  margin-top:24px;
+
+}
+
+.link span{
+
+  color:#d4af37;
+
+  cursor:pointer;
+
+  font-weight:500;
+
+}
+
+.link span:hover{
+
+  color:#e6c65a;
+
+}
+
+/* ========================= */
+/* OTP Section */
+/* ========================= */
+
+.otp-section{
+
+  margin-top:10px;
+
+}
+
+/* Divider */
+
+.divider{
+
+  display:flex;
+
+  align-items:center;
+
+  margin:24px 0;
+
+}
+
+.divider::before,
+.divider::after{
+
+  content:'';
+
+  flex:1;
+
+  height:1px;
+
+  background:linear-gradient(90deg,transparent,#475569,transparent);
+
+}
+
+.divider span{
+
+  padding:0 16px;
+
+  color:#9ca3af;
+
+  font-size:12px;
+
+  text-transform:uppercase;
+
+  letter-spacing:1px;
+
+}
+
+/* ========================= */
+/* Responsive */
+/* ========================= */
+
+@media (max-width:480px){
+
+  .login-card{
+
+    padding:32px 24px;
+
+    margin:16px;
+
+  }
+
+  .login-card h2{
+
+    font-size:24px;
+
+  }
+
+  .icon-wrapper{
+
+    width:56px;
+
+    height:56px;
+
+  }
+
+  .icon-wrapper svg{
+
+    width:28px;
+
+    height:28px;
+
+  }
+
 }

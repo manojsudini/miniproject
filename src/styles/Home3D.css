@@ -1,0 +1,409 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.home-wrapper-3d {
+  width: 100%;
+  min-height: 100vh;
+  background: #020617;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Starfield Canvas */
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Navbar */
+.home-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: transparent;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.home-logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #38bdf8;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+.home-logo:hover {
+  transform: scale(1.05);
+}
+
+.home-auth {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.nav-login,
+.nav-signup {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.nav-login {
+  color: #38bdf8;
+  background: transparent;
+  text-decoration: underline;
+}
+
+.nav-login:hover {
+  opacity: 0.8;
+}
+
+.nav-signup {
+  background: #38bdf8;
+  color: #020617;
+}
+
+.nav-signup:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(56, 189, 248, 0.3);
+}
+
+/* Hero Section with 3D Scene */
+.hero-section-3d {
+  position: relative;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+  text-align: center;
+  overflow: hidden;
+  z-index: 10;
+}
+
+
+
+/* Hero Content */
+.hero-content,
+.hero-content-wrapper {
+  position: relative;
+  z-index: 50;
+  max-width: 800px;
+}
+
+.hero-title {
+  font-size: 56px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+.changing-word {
+  color: #38bdf8;
+  display: inline-block;
+  min-width: 150px;
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  color: #a0a0a0;
+  margin-bottom: 40px;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-outline {
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #38bdf8;
+  background: transparent;
+  color: #38bdf8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-outline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #38bdf8;
+  z-index: -1;
+  transition: left 0.3s ease;
+}
+
+.btn-outline:hover {
+  color: #020617;
+  box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4);
+  transform: translateY(-3px);
+}
+
+.btn-outline:hover::before {
+  left: 0;
+}
+
+/* Workflow Section */
+.workflow-section {
+  padding: 80px 40px;
+  background: transparent;
+  position: relative;
+  z-index: 15;
+}
+
+.workflow-section h2,
+.roles-section h2 {
+  font-size: 42px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 60px;
+  color: #ffffff;
+}
+
+.workflow-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.workflow-card {
+  position: relative;
+}
+
+.card-3d {
+  perspective: 1000px;
+  height: 350px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  color: #e0e0e0;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(56, 189, 248, 0.05) 100%);
+}
+
+.card-icon {
+  font-size: 48px;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+.workflow-card h3 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.workflow-card p {
+  font-size: 14px;
+  color: #a0a0a0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.card-back ul {
+  list-style: none;
+  text-align: left;
+  width: 100%;
+}
+
+.card-back li {
+  padding: 8px 0;
+  color: #e0e0e0;
+  font-size: 14px;
+}
+
+.card-back li::before {
+  content: '✓ ';
+  color: #38bdf8;
+  margin-right: 10px;
+}
+
+.flip-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #38bdf8;
+  background: transparent;
+  color: #38bdf8;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.flip-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+/* Roles Section */
+.roles-section {
+  padding: 80px 40px;
+  background: transparent;
+  position: relative;
+  z-index: 15;
+}
+
+.roles-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.role-card {
+  position: relative;
+  height: 350px;
+}
+
+.role-card h3 {
+  font-size: 26px;
+  margin-bottom: 12px;
+  color: #ffffff;
+}
+
+.role-card > .card-front > p {
+  font-size: 16px;
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+.card-emoji {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+/* Footer */
+.home-footer {
+  text-align: center;
+  padding: 40px 20px;
+  background: transparent;
+  border-top: 1px solid rgba(56, 189, 248, 0.2);
+  color: #606060;
+  font-size: 14px;
+  position: relative;
+  z-index: 15;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .home-nav {
+    padding: 15px 20px;
+  }
+
+  .hero-title {
+    font-size: 36px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-outline {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .workflow-cards,
+  .roles-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-section h2,
+  .roles-section h2 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-nav {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .btn-outline {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+}

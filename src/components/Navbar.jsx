@@ -30,37 +30,42 @@ function Navbar({ role }) {
 
   return (
     <nav className="navbar">
-      <div className="nav-left">HireMate</div>
+      <div className="nav-logo">HireMate</div>
 
       <div className="nav-right">
 
-        {/* APPLICANT NAVBAR */}
-        {role === "applicant" && (
-          <>
-            <Link to="/track">Dashboard</Link>
-            <Link to="/applicant">Apply Job</Link>
-          </>
-        )}
+        <div className="nav-links">
 
-        {/* HR NAVBAR */}
-        {role === "hr" && (
-          <>
-            <Link to="/hr">HR Dashboard</Link>
-            <Link to="/hr">Analyze</Link>
-          </>
-        )}
+          {/* APPLICANT NAVBAR */}
+          {role === "applicant" && (
+            <>
+              <Link to="/track">Dashboard</Link>
+              <Link to="/applicant">Apply Job</Link>
+            </>
+          )}
 
-        {/* ADMIN NAVBAR */}
-        {role === "admin" && (
-          <>
-            <Link to="/admin">Admin Dashboard</Link>
-            <Link to="/admin">Users</Link>
-          </>
-        )}
+          {/* HR NAVBAR */}
+          {role === "hr" && (
+            <>
+              <Link to="/hr">HR Dashboard</Link>
+              <Link to="/hr">Analyze</Link>
+            </>
+          )}
+
+          {/* ADMIN NAVBAR */}
+          {role === "admin" && (
+            <>
+              <Link to="/admin">Admin Dashboard</Link>
+              <Link to="/admin">Users</Link>
+            </>
+          )}
+
+        </div>
 
         <button onClick={handleLogout} className="logout-btn">
           Logout
         </button>
+
       </div>
     </nav>
   );
