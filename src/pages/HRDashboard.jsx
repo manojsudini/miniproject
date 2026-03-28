@@ -80,6 +80,25 @@ const formatAppliedDate = (value) => {
   });
 };
 
+const getAtsErrorMessage = (error) => {
+  const responseMessage = error?.response?.data?.message;
+  const responseDetails = error?.response?.data?.details;
+
+  if (responseMessage && responseDetails) {
+    return `${responseMessage}: ${responseDetails}`;
+  }
+
+  if (responseMessage) {
+    return responseMessage;
+  }
+
+  if (error?.message) {
+    return error.message;
+  }
+
+  return "AI analysis failed";
+};
+
 const drawPdfLogo = (doc, x, y) => {
   doc.setFillColor(14, 165, 233);
   doc.roundedRect(x, y, 12, 12, 3, 3, "F");
@@ -278,6 +297,19 @@ function HRDashboard() {
         }))
         .filter((app) => app.cleanResume);
 
+      if (!candidatesForAnalysis.length) {
+        setAllResults([]);
+        setResults([]);
+        setShowPromote(false);
+
+        if (!preserveMessage) {
+          setMessage("No extracted resume text is available for ATS analysis");
+          setMessageType("error");
+        }
+
+        return;
+      }
+
       let analysisResults = [];
 
       try {
@@ -296,7 +328,7 @@ function HRDashboard() {
       } catch (batchError) {
         console.warn("Batch ATS analysis failed, falling back to single requests", batchError);
 
-        analysisResults = await Promise.all(
+        const settledResults = await Promise.allSettled(
           candidatesForAnalysis.map(async (app) => {
             const response = await axios.post(apiUrl("/api/ats/match"), {
               jobDescription: cleanJD,
@@ -312,6 +344,19 @@ function HRDashboard() {
             };
           })
         );
+
+        const successfulResults = settledResults
+          .filter((result) => result.status === "fulfilled")
+          .map((result) => result.value);
+
+        if (successfulResults.length === 0) {
+          const firstFailure = settledResults.find(
+            (result) => result.status === "rejected"
+          );
+          throw firstFailure?.reason || batchError;
+        }
+
+        analysisResults = successfulResults;
       }
 
       const analysisByCandidateId = new Map(
@@ -366,7 +411,7 @@ function HRDashboard() {
       }
     } catch (error) {
       console.error("AI Analysis error", error);
-      setMessage("AI analysis failed");
+      setMessage(getAtsErrorMessage(error));
       setMessageType("error");
     } finally {
       setIsAnalyzing(false);
