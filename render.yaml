@@ -7,7 +7,7 @@ services:
     staticPublishPath: ./build
     envVars:
       - key: NODE_VERSION
-        value: 20.18.0
+        value: 20.19.0
       - key: REACT_APP_API_BASE_URL
         fromService:
           type: web
@@ -30,7 +30,7 @@ services:
     healthCheckPath: /api/hello
     envVars:
       - key: NODE_VERSION
-        value: 20.18.0
+        value: 20.19.0
       - key: MONGO_URI
         sync: false
       - key: JWT_SECRET
