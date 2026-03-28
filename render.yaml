@@ -75,3 +75,7 @@ services:
         value: "0"
       - key: ATS_VERBOSE_DEBUG
         value: "0"
+      - key: ATS_EMBEDDING_MODE
+        value: lightweight
+      - key: ATS_EMBEDDING_DIMENSION
+        value: "256"

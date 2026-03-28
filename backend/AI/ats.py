@@ -1,27 +1,48 @@
 from collections import Counter
 from datetime import datetime
 from functools import lru_cache
+import hashlib
 import os
 import re
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 app = Flask(__name__)
 CORS(app)
 
-print("Loading ATS model...")
-model = SentenceTransformer("all-MiniLM-L6-v2")
-print("ATS model loaded!")
-EMBEDDING_DIMENSION = model.get_sentence_embedding_dimension()
+EMBEDDING_MODE = os.getenv("ATS_EMBEDDING_MODE", "lightweight").strip().lower()
+EMBEDDING_DIMENSION = int(os.getenv("ATS_EMBEDDING_DIMENSION", "256"))
+MODEL_NAME = os.getenv("ATS_MODEL_NAME", "all-MiniLM-L6-v2")
+ATS_VERBOSE_DEBUG = os.getenv("ATS_VERBOSE_DEBUG", "0") == "1"
 EMBEDDING_OPTIONS = {
     "convert_to_numpy": True,
     "normalize_embeddings": True,
     "show_progress_bar": False,
 }
-ATS_VERBOSE_DEBUG = os.getenv("ATS_VERBOSE_DEBUG", "0") == "1"
+model = None
+
+if EMBEDDING_MODE == "sentence-transformer":
+    try:
+        from sentence_transformers import SentenceTransformer
+
+        print(f"Loading ATS model '{MODEL_NAME}'...")
+        model = SentenceTransformer(MODEL_NAME)
+        EMBEDDING_DIMENSION = model.get_sentence_embedding_dimension()
+        print("ATS model loaded!")
+    except Exception as exc:
+        print(
+            "Sentence-transformer mode is unavailable, falling back to lightweight "
+            f"embeddings: {exc}"
+        )
+        EMBEDDING_MODE = "lightweight"
+
+if EMBEDDING_MODE != "sentence-transformer":
+    print(
+        "Using lightweight ATS embeddings "
+        f"(dimension={EMBEDDING_DIMENSION})"
+    )
 
 
 def format_debug_datetime(value):
@@ -810,7 +831,44 @@ def get_text_embedding(text):
     if not normalized_text:
         return np.zeros(EMBEDDING_DIMENSION, dtype=np.float32)
 
-    return model.encode(normalized_text, **EMBEDDING_OPTIONS)
+    if EMBEDDING_MODE == "sentence-transformer" and model is not None:
+        return model.encode(normalized_text, **EMBEDDING_OPTIONS)
+
+    filtered_tokens = [
+        token
+        for token in normalized_text.split()
+        if len(token) > 2 and token not in STOP_WORDS and not token.isdigit()
+    ]
+    features = Counter(filtered_tokens)
+
+    for first_token, second_token in zip(filtered_tokens, filtered_tokens[1:]):
+        features[f"phrase::{first_token}_{second_token}"] += 0.65
+
+    for keyword, weight in extract_keyword_counter(normalized_text, top_n=60).items():
+        features[f"keyword::{keyword}"] += 1.0 + min(2.0, weight * 0.2)
+
+    for skill, occurrences in extract_skill_evidence(normalized_text).items():
+        features[f"skill::{skill}"] += 1.75 + min(1.5, occurrences * 0.25)
+
+    if not features:
+        return np.zeros(EMBEDDING_DIMENSION, dtype=np.float32)
+
+    embedding = np.zeros(EMBEDDING_DIMENSION, dtype=np.float32)
+
+    for feature, weight in features.items():
+        digest = hashlib.blake2b(feature.encode("utf-8"), digest_size=16).digest()
+        primary_index = int.from_bytes(digest[:8], "big") % EMBEDDING_DIMENSION
+        secondary_index = int.from_bytes(digest[8:], "big") % EMBEDDING_DIMENSION
+        direction = -1.0 if digest[0] & 1 else 1.0
+        embedding[primary_index] += direction * float(weight)
+        embedding[secondary_index] += direction * float(weight) * 0.35
+
+    norm = np.linalg.norm(embedding)
+
+    if norm > 0:
+        embedding /= norm
+
+    return embedding
 
 
 @lru_cache(maxsize=4096)
