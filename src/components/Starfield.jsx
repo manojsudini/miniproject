@@ -95,24 +95,27 @@ export default function Starfield() {
       animationId = requestAnimationFrame(animate);
     }
 
+    function handleResize() {
+      resize();
+      createStars();
+    }
+
     resize();
     createStars();
     animate();
 
-    window.addEventListener("resize", () => {
-      resize();
-      createStars();
-    });
+    window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
+      className="starfield-canvas"
       style={{
         position: "absolute",
         top: 0,

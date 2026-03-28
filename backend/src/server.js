@@ -16,6 +16,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/api/hello", (req, res) => {
+  res.json({
+    message: "Hello from HireMate backend"
+  });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/payment", paymentRoutes);

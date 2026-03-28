@@ -2,8 +2,34 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Signup.css";
 
-function Signup() {
+const UserIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.86 0-7 2.24-7 5v1h14v-1c0-2.76-3.14-5-7-5Z"
+    />
+  </svg>
+);
 
+const MailIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm8 6 7.2-4.8A1 1 0 0 0 19 7H5a1 1 0 0 0-.2.2Zm7 5V9l-6.45 4.3a1 1 0 0 1-1.1 0L5 9v8Z"
+    />
+  </svg>
+);
+
+const LockIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M17 9h-1V7a4 4 0 1 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-6 6.73V17a1 1 0 0 0 2 0v-1.27a2 2 0 1 0-2 0ZM10 9V7a2 2 0 1 1 4 0v2Z"
+    />
+  </svg>
+);
+
+function Signup() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,8 +50,8 @@ function Signup() {
     }
   }, [fixedRole]);
 
-  const isValidEmail = (email) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidEmail = (value) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -44,13 +70,12 @@ function Signup() {
     }
 
     try {
-
       const response = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password, role })
+        body: JSON.stringify({ name, email, password, role }),
       });
 
       const data = await response.json();
@@ -67,181 +92,143 @@ function Signup() {
       setTimeout(() => {
         navigate(`/login?role=${role}`);
       }, 1200);
-
     } catch {
       setMessage("Server error. Please try again.");
       setMessageType("error");
     }
   };
 
-  /* PARTICLES */
-
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
     size: Math.random() * 6 + 2,
     left: Math.random() * 100,
     delay: Math.random() * 5,
-    duration: Math.random() * 10 + 10
+    duration: Math.random() * 10 + 10,
   }));
 
   return (
-    <div className="login-container">
+    <div className="signup-page">
+      <div className="login-container">
+        <div className="grid-overlay" />
 
-      {/* GRID */}
-      <div className="grid-overlay" />
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
+        <div className="orb orb-3" />
 
-      {/* ORBS */}
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            className="particle"
+            style={{
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              left: `${p.left}%`,
+              animationDelay: `${p.delay}s`,
+              animationDuration: `${p.duration}s`,
+            }}
+          />
+        ))}
 
-      {/* PARTICLES */}
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          className="particle"
-          style={{
-            width: p.size + "px",
-            height: p.size + "px",
-            left: p.left + "%",
-            animationDelay: p.delay + "s",
-            animationDuration: p.duration + "s"
-          }}
-        />
-      ))}
-
-      <div className="login-card">
-
-        {/* ICON */}
-        <div className="icon-container">
-          <div className="icon-wrapper">
-
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-
-          </div>
-        </div>
-
-        <h2>Create Account</h2>
-        <p className="subtitle">Sign up to create your account</p>
-
-        {message && (
-          <div className={`form-message ${messageType}`}>
-            {message}
-          </div>
-        )}
-
-        <form onSubmit={handleSignup}>
-
-          {/* NAME */}
-          <div className="input-group">
-
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-
-            <div className="input-icon">
-              👤
-            </div>
-
-          </div>
-
-          {/* EMAIL */}
-          <div className="input-group">
-
-            <input
-              type="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <div className="input-icon">
-              ✉
-            </div>
-
-          </div>
-
-          {/* PASSWORD */}
-          <div className="input-group">
-
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <div className="input-icon">
-              🔒
-            </div>
-
-          </div>
-
-          {/* ROLE */}
-          <div className="input-group">
-
-            {fixedRole ? (
-
-              <input
-                value={role.toUpperCase()}
-                disabled
-              />
-
-            ) : (
-
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+        <div className="login-card">
+          <div className="icon-container">
+            <div className="icon-wrapper">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
               >
-                <option value="">Select Role</option>
-                <option value="applicant">Applicant</option>
-                <option value="hr">HR</option>
-                <option value="admin">Admin</option>
-              </select>
-
-            )}
-
-            <div className="input-icon">
-              👥
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
             </div>
-
-            <div className="select-arrow">⌄</div>
-
           </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary"
-          >
-            Create Account
-          </button>
+          <h2>Create Account</h2>
+          <p className="subtitle">Sign up to create your account</p>
 
-        </form>
+          {message && (
+            <div className={`form-message ${messageType}`}>
+              {message}
+            </div>
+          )}
 
-        <p className="link">
-          Already have an account{" "}
-          <span onClick={() => navigate("/login")}>
-            Sign In
-          </span>
-        </p>
+          <form onSubmit={handleSignup}>
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
 
+              <div className="input-icon">
+                <UserIcon />
+              </div>
+            </div>
+
+            <div className="input-group">
+              <input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              <div className="input-icon">
+                <MailIcon />
+              </div>
+            </div>
+
+            <div className="input-group">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <div className="input-icon">
+                <LockIcon />
+              </div>
+            </div>
+
+            <div className="input-group">
+              {fixedRole ? (
+                <input value={role.toUpperCase()} disabled />
+              ) : (
+                <select value={role} onChange={(e) => setRole(e.target.value)}>
+                  <option value="">Select Role</option>
+                  <option value="applicant">Applicant</option>
+                  <option value="hr">HR</option>
+                  <option value="admin">Admin</option>
+                </select>
+              )}
+
+              <div className="input-icon">
+                <UserIcon />
+              </div>
+
+              <div className="select-arrow">v</div>
+            </div>
+
+            <button type="submit" className="btn btn-primary">
+              Create Account
+            </button>
+          </form>
+
+          <p className="link">
+            Already have an account{" "}
+            <span onClick={() => navigate("/login")}>
+              Sign In
+            </span>
+          </p>
+        </div>
       </div>
-
     </div>
   );
 }

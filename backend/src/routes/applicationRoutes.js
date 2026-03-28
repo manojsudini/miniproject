@@ -166,19 +166,33 @@ router.put("/status/:id", async (req, res) => {
 
     /* SEND MAIL IF ACCEPTED */
 
+    let emailSent = false;
+
     if (status === "ACCEPTED") {
       try {
-        await sendAcceptanceMail(
+        const mailInfo = await sendAcceptanceMail(
           updatedApplication.email,
           updatedApplication.name
         );
-        console.log("Acceptance mail sent");
+
+        emailSent = true;
+        console.log("Acceptance mail sent:", mailInfo.messageId);
       } catch (mailErr) {
-        console.error("Mail sending failed:", mailErr.message);
+        console.error("Mail sending failed:", mailErr);
+
+        return res.status(500).json({
+          message: "Status updated, but acceptance email failed to send",
+          application: updatedApplication,
+          emailSent
+        });
       }
     }
 
-    res.json(updatedApplication);
+    res.json({
+      message: "Status updated successfully",
+      application: updatedApplication,
+      emailSent
+    });
 
   } catch (err) {
     console.error("STATUS UPDATE ERROR:", err);

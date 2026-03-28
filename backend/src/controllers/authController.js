@@ -6,6 +6,27 @@ import otpGenerator from "otp-generator";
 
 /* TEMP OTP STORE */
 const otpStore = {};
+const OTP_EXPIRY_MS = 5 * 60 * 1000;
+
+const generateNumericOtp = () =>
+  otpGenerator.generate(6, {
+    digits: true,
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
+
+const createOtpRecord = (email) => {
+  const otp = generateNumericOtp();
+  const expiresAt = Date.now() + OTP_EXPIRY_MS;
+
+  otpStore[email] = {
+    code: otp,
+    expiresAt,
+  };
+
+  return { otp, expiresAt };
+};
 
 /* ================= SIGNUP ================= */
 export const signup = async (req, res) => {
@@ -90,15 +111,8 @@ export const login = async (req, res) => {
       });
     }
 
-    /* GENERATE OTP */
-    const otp = otpGenerator.generate(6, {
-      digits: true,
-      alphabets: false,
-      upperCase: false,
-      specialChars: false,
-    });
-
-    otpStore[email] = otp;
+    /* GENERATE NUMERIC OTP */
+    const { otp, expiresAt } = createOtpRecord(email);
 
     /* EMAIL TRANSPORTER */
     const transporter = nodemailer.createTransport({
@@ -114,12 +128,14 @@ export const login = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "HireMate Login OTP",
-      text: `Your OTP for login is: ${otp}`,
+      text: `Your HireMate login OTP is ${otp}. It expires in 5 minutes.`,
     });
 
     res.json({
       message: "OTP sent to your email",
       email,
+      expiresAt,
+      expiresInSeconds: OTP_EXPIRY_MS / 1000,
     });
 
   } catch (error) {
@@ -134,10 +150,32 @@ export const login = async (req, res) => {
 /* ================= VERIFY OTP ================= */
 export const verifyOtp = async (req, res) => {
   try {
-
     const { email, otp } = req.body;
+    const otpRecord = otpStore[email];
+    const normalizedOtp = String(otp || "").trim();
 
-    if (!otpStore[email] || otpStore[email] !== otp) {
+    if (!otpRecord) {
+      return res.status(400).json({
+        message: "Please request a new OTP",
+      });
+    }
+
+    if (Date.now() > otpRecord.expiresAt) {
+      delete otpStore[email];
+
+      return res.status(400).json({
+        message: "OTP expired. Please resend OTP.",
+        otpExpired: true,
+      });
+    }
+
+    if (!/^\d{6}$/.test(normalizedOtp)) {
+      return res.status(400).json({
+        message: "OTP must be a 6-digit number",
+      });
+    }
+
+    if (otpRecord.code !== normalizedOtp) {
       return res.status(400).json({
         message: "Invalid OTP",
       });
