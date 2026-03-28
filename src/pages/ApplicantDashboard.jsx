@@ -5,6 +5,7 @@ import Starfield from "../components/Starfield.jsx";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import * as pdfjsLib from "pdfjs-dist";
+import { apiUrl } from "../config/api";
 
 function trimCanvasWhitespace(sourceCanvas) {
   const context = sourceCanvas.getContext("2d", { willReadFrequently: true });
@@ -504,7 +505,7 @@ function ApplicantDashboard() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/applications/apply",
+        apiUrl("/api/applications/apply"),
         {
           method: "POST",
           headers: {

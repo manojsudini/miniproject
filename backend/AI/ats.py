@@ -1071,5 +1071,14 @@ def match_batch():
         return jsonify({"results": []})
 
 
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"})
+
+
 if __name__ == "__main__":
-    app.run(port=8000, debug=os.getenv("FLASK_DEBUG", "0") == "1")
+    app.run(
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "8000")),
+        debug=os.getenv("FLASK_DEBUG", "0") == "1",
+    )

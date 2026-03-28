@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { apiUrl } from "../config/api";
 import "./Signup.css";
 
 const UserIcon = () => (
@@ -70,7 +71,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
+      const response = await fetch(apiUrl("/api/auth/signup"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

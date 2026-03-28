@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import { apiUrl } from "../config/api";
 import "./TrackStatus.css";
 
 const steps = [
@@ -17,7 +18,7 @@ function TrackStatus() {
 
   useEffect(() => {
 
-    fetch("http://localhost:5000/api/applications/my-applications", {
+    fetch(apiUrl("/api/applications/my-applications"), {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }

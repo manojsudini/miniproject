@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
 import Navbar from "../components/Navbar.jsx";
+import { RAZORPAY_KEY_ID, apiUrl } from "../config/api";
 import "./HRDashboard.css";
 
 const ROLE_OPTIONS = [
@@ -218,7 +219,7 @@ function HRDashboard() {
   const fetchApplications = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/applications",
+        apiUrl("/api/applications"),
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -280,7 +281,7 @@ function HRDashboard() {
       let analysisResults = [];
 
       try {
-        const { data } = await axios.post("http://127.0.0.1:8000/match-batch", {
+        const { data } = await axios.post(apiUrl("/api/ats/match-batch"), {
           jobDescription: cleanJD,
           selectedRole: role,
           candidates: candidatesForAnalysis.map((app) => ({
@@ -297,7 +298,7 @@ function HRDashboard() {
 
         analysisResults = await Promise.all(
           candidatesForAnalysis.map(async (app) => {
-            const response = await axios.post("http://127.0.0.1:8000/match", {
+            const response = await axios.post(apiUrl("/api/ats/match"), {
               jobDescription: cleanJD,
               resumeText: app.cleanResume,
               selectedRole: role,
@@ -377,13 +378,13 @@ function HRDashboard() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/payment/create-payment"
+        apiUrl("/api/payment/create-payment")
       );
 
       const order = response.data;
 
       const options = {
-        key: "rzp_test_SN7sEcagRzBQAG",
+        key: RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: "INR",
         name: "HireMate",
@@ -415,7 +416,7 @@ function HRDashboard() {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/applications/status/${id}`,
+        apiUrl(`/api/applications/status/${id}`),
         {
           status,
           rejectionReason: reason,
