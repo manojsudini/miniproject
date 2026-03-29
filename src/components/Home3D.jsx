@@ -34,6 +34,10 @@ export default function Home3D() {
         <div className="home-logo">HireMate</div>
 
         <div className="home-auth">
+          <Link to="/login" className="nav-login">
+            Login
+          </Link>
+
           <Link to="/signup" className="nav-signup">
             Create Account
           </Link>
@@ -44,7 +48,7 @@ export default function Home3D() {
       <section className="hero-section-3d">
         <div className="hero-content-wrapper">
           <h1 className="hero-title">
-            Hiring,&nbsp;
+            <span className="hero-title-static">Hiring,</span>
             <span className="changing-word">{words[wordIndex]}</span>
           </h1>
 
@@ -69,11 +73,6 @@ export default function Home3D() {
             </button>
           </div>
 
-          <div className="hero-secondary-action">
-            <Link to="/login" className="hero-login-link">
-              Login
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -214,6 +213,26 @@ export default function Home3D() {
               </button>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="page-end-actions mobile-only">
+        <div className="page-end-actions-inner">
+          <div className="page-end-copy">
+            <p className="page-end-kicker">Access HireMate</p>
+            <h3>Ready to get started?</h3>
+            <p>Create a new account or jump back into your dashboard.</p>
+          </div>
+
+          <div className="page-end-buttons">
+            <Link to="/signup" className="hero-account-link">
+              Create Account
+            </Link>
+
+            <Link to="/login" className="hero-login-link">
+              Login
+            </Link>
+          </div>
         </div>
       </section>
 
